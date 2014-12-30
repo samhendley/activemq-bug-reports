@@ -59,3 +59,8 @@ seen them it seems to pass the test.
   of mode. We ran in this mode for a long period before we noticed these "stuck" network connectors. I'm
   still not sure what the semantics of Max memoryUsage is when those values aren't respected and it allows filling to 100s
   or 1000s of times the limits and then failing in a surprising way.
+
+### Workaround:
+
+* Don't disable producerFlowControl
+* Make sure the usageMemory is large enough to handle the max size that can ever end up on the broker.
