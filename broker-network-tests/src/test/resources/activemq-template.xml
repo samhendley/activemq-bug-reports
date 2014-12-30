@@ -1,0 +1,89 @@
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:amq="http://activemq.apache.org/schema/core"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <broker xmlns="http://activemq.apache.org/schema/core" brokerName="_BROKER_NAME_" persistent="false"
+            useJmx="false"
+            start="false">
+    
+        <plugins>
+              <discardingDLQBrokerPlugin dropAll="true" dropTemporaryTopics="true" dropTemporaryQueues="true" reportInterval="30"/>
+        </plugins>
+
+        <!-- Destination specific policies using destination names or wildcards -->
+        <destinationPolicy>
+            <policyMap>
+                <policyEntries>
+                    <policyEntry queue=">" producerFlowControl="false" />
+                    <policyEntry topic=">" producerFlowControl="false" topicPrefetch="65535"/>
+                </policyEntries>
+            </policyMap>
+        </destinationPolicy>
+
+        <!-- Use the following to configure how ActiveMQ is exposed in JMX -->
+        <managementContext>
+            <managementContext createConnector="true" />
+        </managementContext>
+
+        <!--
+            Configure network connector to use multicast protocol
+            For more information, see
+
+            http://activemq.apache.org/multicast-transport-reference.html
+        -->
+        <networkConnectors>
+<!--
+            <networkConnector uri="multicast://default"/>
+            ?nested.soTimeout=2000&amp;nested.soWriteTimeout=2000&amp;nested.wireFormat.maxInactivityDuration=3000
+-->
+            <networkConnector prefetchSize="100" uri="static:(_OTHER_HOSTS_)?nested.soTimeout=2000&amp;nested.soWriteTimeout=2000&amp;nested.wireFormat.maxInactivityDuration=3000"/>
+        </networkConnectors>
+
+        <persistenceAdapter>
+<!--
+            <kahaDB directory="${activemq.data}/kahadb"/>
+-->
+            <memoryPersistenceAdapter/>
+        </persistenceAdapter>
+
+        <!--  The maximum amount of space the broker will use before slowing down producers -->
+        <systemUsage>
+            <systemUsage>
+<!--
+                <memoryUsage>
+                    <memoryUsage limit="20 mb"/>
+                </memoryUsage>
+-->
+                <memoryUsage>
+                    <memoryUsage limit="_MEMORY_MAX_ mb"/>
+                </memoryUsage>
+                <storeUsage>
+                    <storeUsage limit="10 mb" name="foo"/>
+                </storeUsage>
+<!--
+                <tempUsage>
+                    <tempUsage limit="100 mb"/>
+                </tempUsage>
+-->
+                <tempUsage>
+                    <tempUsage limit="10 mb"/>
+                </tempUsage>
+            </systemUsage>
+        </systemUsage>
+
+        <!--
+            The transport connectors ActiveMQ will listen to
+            Configure discovery URI to use multicast protocol
+        -->
+        <transportConnectors>
+            <transportConnector name="openwire" uri="tcp://localhost:_PORT_"/>
+        </transportConnectors>
+
+    </broker>
+
+</beans>
