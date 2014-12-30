@@ -5,7 +5,7 @@ Isolated reproductions for activemq bugs
 
 ## Network Connectors fail when Memory Usage exceeded
 
-Test Class: [NetworkForwardingTest](/src/test/java/com/sensus/activemqtests/NetworkForwardingTest.java)
+Test Class: [NetworkForwardingTest](/broker-network-tests/src/test/java/com/sensus/activemqtests/NetworkForwardingTest.java)
 
 ### Test Setup:
 
